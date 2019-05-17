@@ -1,0 +1,156 @@
+extends layout
+
+block content
+
+    body
+        main.container(role="main")
+            .container.theme-showcase
+                .page-header
+
+                div.main.container
+
+                    div.row
+                        div.col-md-6
+                            if !myProjects.length
+                                div.col-md-12
+                                    p Seems like you do not have any projects.
+                                    p Enjoy your free day.
+
+                            if myProjects.length
+                                .card
+                                    .card-header#bg-theme
+                                        | My Projects
+                                    .card-body
+                                        blockquote.blockquote.mb-0
+
+                                            .list-group
+                                                each project in myProjects
+                                                    a.list-group-item.list-group-item-action.flex-column.align-items-start(href='/projects/'+project.id+'/view')
+                                                        .d-flex.w-100.justify-content-between
+                                                            h6.mb-1 #{project.name}
+                                                        p.mb-1(style="font-size:9pt")
+                                                            |  #{project.description}
+
+                        div.col-md-6
+                            if !myActiveSprints.length && myProjects.length
+                                div.col-md-12
+                                    p Seems like you don't have any active sprints.
+                                    p Enjoy your free day.
+
+                            if myActiveSprints.length
+                                .card
+                                    .card-header#bg-theme
+                                        | Active sprints
+
+                                    .card-body
+
+                                        blockquote.blockquote.mb-0
+
+                                            .list-group
+                                                each sprint in myActiveSprints
+                                                    a.list-group-item.list-group-item-action.flex-column.align-items-start(href='/sprints/'+sprint.id+'/view')
+                                                        .d-flex.w-100.justify-content-between
+                                                            h6.mb-1 Project: #{sprint.Project.name}
+                                                        p.mb-1(style="font-size:9pt")
+                                                            |  #{moment(sprint.startDate).format('DD.MM.YYYY')} - #{moment(sprint.endDate).format('DD.MM.YYYY')} (#{moment(sprint.endDate).diff(moment(),'days')} days left)
+
+                        div.col-md-12(style="padding-top: 20px")
+                            if myTasks.pending.length + myTasks.accepted.length + myTasks.inProgress.length + myTasks.done.length !== 0
+                                .card
+                                    .card-header#bg-theme
+                                        | My tasks
+
+                                    .card-body
+                                        blockquote.blockquote.mb-0
+
+                                            - var separator = false
+
+                                            if (myTasks.pending.length !== 0)
+                                                p Pending tasks:
+
+                                            div.list-group
+                                                each pendingTask in myTasks.pending
+                                                    - separator = true
+                                                    div.list-group-item.list-group-item-action
+                                                        div.container
+                                                            div.row
+                                                                div.col-sm-8
+                                                                    a(href='/tasks/' + pendingTask.id + '/edit', style='text-decoration: none')
+                                                                        .d-flex.w-100.justify-content-between
+                                                                            h6.mb-1 #{pendingTask.name} [estimate: #{Math.round(pendingTask.time * 6 * 2) / 2}h]
+                                                                        p.mb-1(style="font-size:9pt")
+                                                                            |  #{pendingTask.description}
+                                                                div.col-sm-4
+                                                                    a.btn.btn-success.margin-bottom10(href='/tasks/' + pendingTask.id + '/accept', style='margin-right: 4px')
+                                                                        | &#10003;
+                                                                    a.btn.btn-danger.margin-bottom10(href='/tasks/' + pendingTask.id + '/reject')
+                                                                        | &#10005;
+
+                                            if (separator && myTasks.accepted.length !== 0)
+                                                hr
+                                            if (myTasks.accepted.length !== 0)
+                                                p Accepted tasks:
+
+                                            div.list-group
+                                                each acceptedTask in myTasks.accepted
+                                                    - separator = true
+                                                    div.list-group-item.list-group-item-action
+                                                        div.container
+                                                            div.row
+                                                                div.col-sm-7
+                                                                    a(href='/tasks/' + acceptedTask.id + '/edit', style='text-decoration: none')
+                                                                        .d-flex.w-100.justify-content-between
+                                                                            - loggedText = acceptedTask.loggedTime > 0.0 ? ", logged time: " + (acceptedTask.loggedTime * 6).toFixed(2) + "h" : ""
+                                                                            h6.mb-1 #{acceptedTask.name} [estimate: #{Math.round(acceptedTask.time * 6 * 2) / 2}h#{loggedText}]
+                                                                        p.mb-1(style="font-size:9pt")
+                                                                            |  #{acceptedTask.description}
+                                                                div.col-sm-2
+                                                                    a.btn.btn-primary.float-right(href='/tasks/' + acceptedTask.id + '/startTemp')
+                                                                        | Start work
+                                                                div.col-sm-3
+                                                                    a.btn.btn-danger.float-left(href='/tasks/' + acceptedTask.id + '/reject')
+                                                                        | X
+                                                                    if (acceptedTask.loggedTime > 0.0)
+                                                                        a.btn.btn-success(href='/tasks/' + acceptedTask.id + '/finish', style="margin-left: 30px;")
+                                                                            | Mark as done
+
+                                            if (separator && myTasks.inProgress.length !== 0)
+                                                hr
+                                            if (myTasks.inProgress.length !== 0)
+                                                p Active tasks:
+
+                                            div.list-group
+                                                each activeTask in myTasks.inProgress
+                                                    - separator = true
+                                                    div.list-group-item.list-group-item-action
+                                                        div.container
+                                                            div.row
+                                                                div.col-sm-8
+                                                                    a(href='/tasks/' + activeTask.id + '/edit', style='text-decoration: none')
+                                                                        .d-flex.w-100.justify-content-between
+                                                                            h6.mb-1 #{activeTask.name} [estimate: #{Math.round(activeTask.time * 6 * 2) / 2}h, logged time: #{(activeTask.loggedTime * 6).toFixed(2)}h]
+                                                                        p.mb-1(style="font-size:9pt")
+                                                                            |  #{activeTask.description}
+                                                                div.col-sm-4
+                                                                    a.btn.btn-primary.float-left(href='/tasks/' + activeTask.id + '/pause')
+                                                                        | Pause progress
+
+                                            if (separator && myTasks.done.length !== 0)
+                                                hr
+                                            if (myTasks.done.length !== 0)
+                                                p Finished tasks:
+
+                                            div.list-group
+                                                each doneTask in myTasks.done
+                                                    div.list-group-item.list-group-item-action
+                                                        div.container
+                                                            div.row
+                                                                div.col-sm-8
+                                                                    a(href='/tasks/' + doneTask.id + '/edit', style='text-decoration: none')
+                                                                        .d-flex.w-100.justify-content-between
+                                                                            h6.mb-1 #{doneTask.name} [estimate: #{Math.round(doneTask.time * 6 * 2) / 2}h, logged time: #{(doneTask.loggedTime * 6).toFixed(2)}h]
+                                                                        p.mb-1(style="font-size:9pt")
+                                                                            | #{doneTask.description}
+                                                                div.col-sm-3
+                                                                    a.btn.btn-primary(href='/tasks/' + doneTask.id + '/restart')
+                                                                        | Restart work
