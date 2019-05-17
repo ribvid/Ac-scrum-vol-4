@@ -1,0 +1,22 @@
+extends layout
+
+block content
+
+    main.container(role="main")
+        .container.theme-showcase
+            .page-header
+                h3.ml-3.mb-3 Documentation
+
+                .container
+                    nav.navbar.navbar-expand-lg.navbar-light.bg-light
+                        ul.navbar-nav.mr-auto
+                            li.nav-item
+                                a.nav-link(href='/projects/' + project.id + '/view')
+                                    i.fas.fa-chevron-left
+                                    |  Back
+
+                hr
+            div.main.container
+                .row
+                    .col-12
+                        | Tukaj pride dokumentacija ...

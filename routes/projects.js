@@ -173,4 +173,18 @@ router.post('/create/', middleware.isAllowed, async function(req, res, next) {
 
 });
 
+// ------------------ endpoint for documentation ------------------
+
+router.get('/:id/documentation', ProjectHelper.canAccessProject, async function(req, res, next) {
+	let currentProject = await ProjectHelper.getProject(req.params.id);
+
+	res.render('documentation', {
+	    pageName: 'documentation',
+        project: currentProject,
+		uid: req.user.id,
+		username: req.user.username,
+		isUser: req.user.is_user,
+	});
+});
+
 module.exports = router;
