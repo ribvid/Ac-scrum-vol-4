@@ -175,7 +175,7 @@ router.post('/create/', middleware.isAllowed, async function(req, res, next) {
 
 });
 
-// ------------------ endpoint for documentation ------------------
+// ------------------ endpoints for documentation ------------------
 
 router.get('/:id/documentation', ProjectHelper.canAccessProject, async function(req, res, next) {
 	const currentProject = await ProjectHelper.getProject(req.params.id);
@@ -250,6 +250,76 @@ router.post('/:id/documentation/create', ProjectHelper.canAccessProject, async f
 		await createdDocumentation.save();
 
 		req.flash('success', 'Documentation for ' + currentProject.name + ' has been successfully created');
+
+		return res.redirect('/projects/' + currentProject.id + '/documentation?status=success');
+
+    } catch (e) {
+		req.flash('error', 'Error!');
+		console.log(e);
+		return res.render('add_edit_documentation', {
+			pageName: 'create_documentation',
+			errorMessages: req.flash('error'),
+			project: currentProject,
+			uid: req.user.id,
+			username: req.user.username,
+			isUser: req.user.is_user,
+		});
+	}
+});
+
+router.get('/:id/documentation/edit', ProjectHelper.canAccessProject, async function(req, res, next) {
+	const documentation = await ProjectHelper.getProjectDocumentation(req.params.id);
+
+	if (!documentation || !documentation.content) {
+		return res.redirect('/projects/' + req.params.id + '/documentation/create');
+	}
+
+	const currentProject = await ProjectHelper.getProject(req.params.id);
+
+	res.render('add_edit_documentation', {
+        pageName: 'create_documentation',
+		errorMessages: 0,
+		project: currentProject,
+		documentation: documentation,
+		uid: req.user.id,
+		username: req.user.username,
+		isUser: req.user.is_user,
+	});
+});
+
+router.post('/:id/documentation/edit', ProjectHelper.canAccessProject, async function(req, res, next) {
+	const documentation = await ProjectHelper.getProjectDocumentation(req.params.id);
+
+	if (!documentation || !documentation.content) {
+		return res.redirect('/projects/' + req.params.id + '/documentation/create');
+	}
+
+	const currentProject = await ProjectHelper.getProject(req.params.id);
+	const data = req.body;
+
+	try {
+	    const content = data.content;
+
+	    if (!content) {
+	        req.flash('error', 'You can\'t save documentation with no content!');
+			return res.render('add_edit_documentation', {
+				pageName: 'create_documentation',
+				errorMessages: req.flash('error'),
+				project: currentProject,
+				documentation: documentation,
+				uid: req.user.id,
+				username: req.user.username,
+				isUser: req.user.is_user,
+			});
+        }
+
+		documentation.setAttributes({
+			content: content,
+		});
+
+		await documentation.save();
+
+		req.flash('success', 'Documentation for ' + currentProject.name + ' has been successfully updated');
 
 		return res.redirect('/projects/' + currentProject.id + '/documentation?status=success');
 
