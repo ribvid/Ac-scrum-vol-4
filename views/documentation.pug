@@ -14,9 +14,28 @@ block content
                                 a.nav-link(href='/projects/' + project.id + '/view')
                                     i.fas.fa-chevron-left
                                     |  Back
+                            if documentation
+                                li.nav-item
+                                    a.nav-link(href='/projects/' + project.id + '/view')
+                                        |  Edit
+                                li.nav-item
+                                    a.nav-link(href='/projects/' + project.id + '/view')
+                                        |  Export
 
                 hr
             div.main.container
                 .row
-                    .col-12
-                        | Tukaj pride dokumentacija ...
+                    if documentation
+                        .col-12 #{documentation.content}
+                    else
+                        .col-12.d-flex.justify-content-center.align-items-center.flex-column
+                            h5.mb-5.mt-5.text-secondary
+                                | There's currently no documentation for this project.
+                            div
+                                a.btn.btn-primary(href="#")
+                                    i.fas.fa-pen-square.mr-2
+                                    | Add new
+                                span.ml-3.mr-3.text-secondary or
+                                a.btn.btn-light(href="#")
+                                    i.fas.fa-file-upload.mr-2
+                                    | Import
