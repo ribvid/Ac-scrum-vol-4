@@ -16,26 +16,27 @@ block content
                                     |  Back
                             if documentation
                                 li.nav-item
-                                    a.nav-link(href='/projects/' + project.id + '/view')
+                                    a.nav-link(href='/projects/' + project.id + '/documentation/edit')
                                         |  Edit
                                 li.nav-item
-                                    a.nav-link(href='/projects/' + project.id + '/view')
+                                    a.nav-link(href='/projects/' + project.id + '/documentation/export')
                                         |  Export
 
                 hr
             div.main.container
                 .row
-                    if documentation
-                        .col-12 #{documentation.content}
+                    if documentation && documentation.content
+                        .col-12
+                            #{documentation.content}
                     else
                         .col-12.d-flex.justify-content-center.align-items-center.flex-column
                             h5.mb-5.mt-5.text-secondary
                                 | There's currently no documentation for this project.
                             div
-                                a.btn.btn-primary(href="#")
+                                a.btn.btn-primary(href='/projects/' + project.id + '/documentation/create')
                                     i.fas.fa-pen-square.mr-2
-                                    | Add new
+                                    | Create new documentation
                                 span.ml-3.mr-3.text-secondary or
                                 a.btn.btn-light(href="#")
                                     i.fas.fa-file-upload.mr-2
-                                    | Import
+                                    | Import existing documentation

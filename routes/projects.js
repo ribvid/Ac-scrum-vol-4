@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var moment = require('moment');
+var showdown = require('showdown');
 
 var models = require('../models/');
 var middleware = require('./middleware.js');
@@ -176,8 +177,13 @@ router.post('/create/', middleware.isAllowed, async function(req, res, next) {
 // ------------------ endpoint for documentation ------------------
 
 router.get('/:id/documentation', ProjectHelper.canAccessProject, async function(req, res, next) {
-	let currentProject = await ProjectHelper.getProject(req.params.id);
-	let documentation = await ProjectHelper.getProjectDocumentation(req.params.id);
+	const currentProject = await ProjectHelper.getProject(req.params.id);
+	const documentation = await ProjectHelper.getProjectDocumentation(req.params.id);
+
+	if (!!documentation && !!documentation.content) {
+	    const converter = new showdown.Converter();
+		documentation.content = converter.makeHtml(documentation.content);
+	}
 
 	res.render('documentation', {
 	    pageName: 'documentation',
@@ -187,6 +193,36 @@ router.get('/:id/documentation', ProjectHelper.canAccessProject, async function(
 		username: req.user.username,
 		isUser: req.user.is_user,
 	});
+});
+
+router.get('/:id/documentation/create', ProjectHelper.canAccessProject, async function(req, res, next) {
+	const currentProject = await ProjectHelper.getProject(req.params.id);
+
+    res.render('add_edit_documentation', {
+	    pageName: 'create_documentation',
+		project: currentProject,
+		uid: req.user.id,
+		username: req.user.username,
+		isUser: req.user.is_user,
+	});
+});
+
+router.post('/:id/documentation/create', ProjectHelper.canAccessProject, async function(req, res, next) {
+	const data = req.body;
+
+	try {
+	    console.log(data);
+    } catch (e) {
+		req.flash('error', 'Error!');
+		res.render('add_edit_documentation', {
+			pageName: 'create_documentation',
+			errorMessages: req.flash('error'),
+            success: 0,
+            uid: req.user.id,
+			username: req.user.username,
+			isUser: req.user.is_user,
+		});
+	}
 });
 
 module.exports = router;

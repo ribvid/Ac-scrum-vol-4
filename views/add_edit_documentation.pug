@@ -1,0 +1,36 @@
+extends layout
+
+block content
+
+    main.container(role="main")
+        .container.theme-showcase
+            .page-header
+                h3.ml-3.mb-3 Documentation
+
+                .container
+                    nav.navbar.navbar-expand-lg.navbar-light.bg-light
+                        ul.navbar-nav.mr-auto
+                            li.nav-item
+                                a.nav-link(href='/projects/' + project.id + '/documentation')
+                                    i.fas.fa-chevron-left
+                                    |  Back
+                hr
+            div.main.container
+                .row
+                    .col-12
+                        form.well.form-horizontal(method='POST' action='/projects/' + project.id + '/documentation/create')
+                            .form-group
+                                textarea#md-editor.form-control.mb-0
+
+                            button.btn.btn-primary.center-block(type='submit') Create
+
+    link(href='https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css', rel='stylesheet')
+    script(src='https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js')
+
+    script.
+        new SimpleMDE({
+            element: document.getElementById("md-editor"),
+            hideIcons: ["side-by-side", "fullscreen"],
+            spellChecker: false,
+            status: false,
+        });
