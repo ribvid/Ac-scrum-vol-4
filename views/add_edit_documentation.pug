@@ -24,7 +24,7 @@ block content
                                 p Something went wrong. Please check if your form is correct.
                 .row
                     .col-12
-                        - var actionUrl = '/projects/' + project.id + '/documentation/' + !!documentation ? 'edit' : 'create';
+                        - var actionUrl = '/projects/' + project.id + '/documentation/' + (!!documentation ? 'edit' : 'create');
                         form.well.form-horizontal(method='POST' action=actionUrl)
                             .form-group
                                 textarea#md-editor.form-control.mb-0(name='content')
