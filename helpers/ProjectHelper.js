@@ -1,5 +1,6 @@
 var models = require('../models');
 var Project = models.Project;
+var Documentation = models.Documentation;
 var UserProject = models.UserProject;
 var User = models.User;
 var sequelize = require('sequelize');
@@ -161,6 +162,14 @@ async function getProjectToEdit(projectId) {
     return toEditProject;
 }
 
+async function getProjectDocumentation(projectId) {
+    return await Documentation.findOne({
+        where: {
+            "project_id": projectId,
+        },
+    });
+}
+
 // OPTIMISE THOSE
 async function isAdmin(req, res, next) {
     var user = req.user;
@@ -277,6 +286,7 @@ module.exports = {
     saveProjectMembers,
     getProjectMembers,
     getProjectToEdit,
+    getProjectDocumentation,
     isPM,
     isAdmin,
     isSMorAdmin,

@@ -1,0 +1,49 @@
+extends layout
+
+block content
+
+    main.container(role="main")
+        .container.theme-showcase
+            .page-header
+                h3.ml-3.mb-3 Documentation
+
+                .container
+                    nav.navbar.navbar-expand-lg.navbar-light.bg-light
+                        ul.navbar-nav.mr-auto
+                            li.nav-item
+                                a.nav-link(href='/projects/' + project.id + '/documentation')
+                                    i.fas.fa-chevron-left
+                                    |  Back
+                hr
+            div.main.container
+                .row
+                    if errorMessages !== 0
+                        .col-md-12.col-md-offset-0.margin-top20
+                            .alert.alert-danger(role="alert")
+                                h4.alert-heading #{errorMessages}
+                                p Something went wrong. Please check if your form is correct.
+                .row
+                    .col-12
+                        - var actionUrl = '/projects/' + project.id + '/documentation/' + !!documentation ? 'edit' : 'create';
+                        form.well.form-horizontal(method='POST' action=actionUrl)
+                            .form-group
+                                textarea#md-editor.form-control.mb-0(name='content')
+                                    if !!documentation && documentation.content
+                                        != documentation.content
+
+                            button.btn.btn-primary.center-block(type='submit')
+                                if !!documentation
+                                    | Edit
+                                else
+                                    | Create
+
+    link(href='https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css', rel='stylesheet')
+    script(src='https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js')
+
+    script.
+        new SimpleMDE({
+            element: document.getElementById("md-editor"),
+            hideIcons: ["side-by-side", "fullscreen"],
+            spellChecker: false,
+            status: false,
+        });
