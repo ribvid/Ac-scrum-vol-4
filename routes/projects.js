@@ -10,6 +10,7 @@ var middleware = require('./middleware.js');
 var User = models.User;
 var Projects = models.Project;
 var UserProject = models.UserProject;
+var Documentation = models.Documentation;
 
 // helpers
 var ProjectHelper = require('../helpers/ProjectHelper');
@@ -189,6 +190,7 @@ router.get('/:id/documentation', ProjectHelper.canAccessProject, async function(
 	    pageName: 'documentation',
         project: currentProject,
         documentation: documentation,
+		success: req.query.status === "success" ? req.flash('success') : 0,
 		uid: req.user.id,
 		username: req.user.username,
 		isUser: req.user.is_user,
@@ -196,10 +198,17 @@ router.get('/:id/documentation', ProjectHelper.canAccessProject, async function(
 });
 
 router.get('/:id/documentation/create', ProjectHelper.canAccessProject, async function(req, res, next) {
+	const documentation = await ProjectHelper.getProjectDocumentation(req.params.id);
+
+	if (!!documentation && documentation.content) {
+		return res.redirect('/projects/' + req.params.id + '/documentation/edit');
+	}
+
 	const currentProject = await ProjectHelper.getProject(req.params.id);
 
     res.render('add_edit_documentation', {
-	    pageName: 'create_documentation',
+        pageName: 'create_documentation',
+		errorMessages: 0,
 		project: currentProject,
 		uid: req.user.id,
 		username: req.user.username,
@@ -208,17 +217,50 @@ router.get('/:id/documentation/create', ProjectHelper.canAccessProject, async fu
 });
 
 router.post('/:id/documentation/create', ProjectHelper.canAccessProject, async function(req, res, next) {
+	const documentation = await ProjectHelper.getProjectDocumentation(req.params.id);
+
+	if (!!documentation && documentation.content) {
+		return res.redirect('/projects/' + req.params.id + '/documentation/edit');
+	}
+
+	const currentProject = await ProjectHelper.getProject(req.params.id);
 	const data = req.body;
 
 	try {
-	    console.log(data);
+	    const content = data.content;
+
+	    if (!content) {
+	        req.flash('error', 'Content is missing!');
+			return res.render('add_edit_documentation', {
+				pageName: 'create_documentation',
+				errorMessages: req.flash('error'),
+				project: currentProject,
+				uid: req.user.id,
+				username: req.user.username,
+				isUser: req.user.is_user,
+			});
+        }
+
+		// Create new documentation
+		const createdDocumentation = Documentation.build({
+			content: content,
+			project_id: currentProject.id
+		});
+
+		await createdDocumentation.save();
+
+		req.flash('success', 'Documentation for ' + currentProject.name + ' has been successfully created');
+
+		return res.redirect('/projects/' + currentProject.id + '/documentation?status=success');
+
     } catch (e) {
 		req.flash('error', 'Error!');
-		res.render('add_edit_documentation', {
+		console.log(e);
+		return res.render('add_edit_documentation', {
 			pageName: 'create_documentation',
 			errorMessages: req.flash('error'),
-            success: 0,
-            uid: req.user.id,
+			project: currentProject,
+			uid: req.user.id,
 			username: req.user.username,
 			isUser: req.user.is_user,
 		});

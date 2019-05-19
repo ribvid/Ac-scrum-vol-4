@@ -17,10 +17,16 @@ block content
                 hr
             div.main.container
                 .row
+                    if errorMessages !== 0
+                        .col-md-12.col-md-offset-0.margin-top20
+                            .alert.alert-danger(role="alert")
+                                h4.alert-heading #{errorMessages}
+                                p Something went wrong. Please check if your form is correct.
+                .row
                     .col-12
                         form.well.form-horizontal(method='POST' action='/projects/' + project.id + '/documentation/create')
                             .form-group
-                                textarea#md-editor.form-control.mb-0
+                                textarea#md-editor.form-control.mb-0(name='content')
 
                             button.btn.btn-primary.center-block(type='submit') Create
 
