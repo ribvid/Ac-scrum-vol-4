@@ -1,29 +1,31 @@
 var express = require('express');
 var router = express.Router();
 var models = require('../models/');
-var Project = require('../models/project.js').Project;
+var middleware = require('./middleware.js');
 
 var User = models.User;
-/* GET users listing. */
 
-// JSON GET EXAMPLE
-/*router.get('/', async function(req, res, next) {
+router.get('/:id', middleware.isAllowed, async function (req, res, next) {
 
-  try {
-    let users = await User.findAllUsers({
-      include: [
-        {
-          model: Project,
+    let user = await User.findOne({
+        where: {
+            id: req.params.id
         }
-      ]
-    })
-    res.send(JSON.parse(JSON.stringify(users)));
+    });
 
-  } catch (e) {
-    throw e;
-  }
-
-
-});*/
+    res.render('users', {
+        errorMessages: 0,
+        title: 'AC scrum vol2',
+        pageName: 'edit_user',
+        isUser: req.user.is_user,
+        username: req.user.username,
+        success: 0,
+        edit_name: user.name,
+        edit_surname: user.surname,
+        edit_email: user.email,
+        edit_username: user.username,
+        edit_isUser: user.is_user
+    });
+});
 
 module.exports = router;
