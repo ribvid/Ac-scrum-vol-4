@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var moment = require('moment');
 var showdown = require('showdown');
+var fs = require('fs');
+var http = require('http');
 
 var models = require('../models/');
 var middleware = require('./middleware.js');
@@ -377,6 +379,28 @@ router.post('/:id/documentation/import', ProjectHelper.canAccessProject, async f
 		console.log(e);
 		return res.redirect('/projects/' + currentProject.id + '/documentation?status=error');
 	}
+});
+
+router.get('/:id/documentation/export', ProjectHelper.canAccessProject, async function(req, res, next) {
+	const projectId = req.params.id;
+	const documentation = await ProjectHelper.getProjectDocumentation(projectId);
+
+	if (!documentation || !documentation.content) {
+		req.flash('error', 'Can\'t export documentation because it does not exist.');
+		return res.redirect('/projects/' + projectId + '/documentation?status=error');
+	}
+	
+	const filename = `documentation-${projectId}.md`;
+
+	fs.writeFile(`public/documentations/${filename}`, documentation.content, function (err) {
+		if (err) {
+			req.flash('error', 'Export has failed!');
+			console.log(err);
+			return res.redirect('/projects/' + projectId + '/documentation?status=error');
+		}
+
+		res.download(`public/documentations/${filename}`);
+	});
 });
 
 module.exports = router;
