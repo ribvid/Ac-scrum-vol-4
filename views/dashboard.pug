@@ -55,6 +55,7 @@ block content
                                                             |  #{moment(sprint.startDate).format('DD.MM.YYYY')} - #{moment(sprint.endDate).format('DD.MM.YYYY')} (#{moment(sprint.endDate).diff(moment(),'days')} days left)
 
                         div.col-md-12(style="padding-top: 20px")
+
                             if myTasks.pending.length + myTasks.accepted.length + myTasks.inProgress.length + myTasks.done.length !== 0
                                 .card
                                     .card-header#bg-theme
@@ -100,7 +101,7 @@ block content
                                                                 div.col-sm-7
                                                                     a(href='/tasks/' + acceptedTask.id + '/edit', style='text-decoration: none')
                                                                         .d-flex.w-100.justify-content-between
-                                                                            - loggedText = acceptedTask.loggedTime > 0.0 ? ", logged time: " + (acceptedTask.loggedTime * 6).toFixed(2) + "h" : ""
+                                                                            - loggedText = acceptedTask.loggedTime > 0.0 ? ", logged time: " + (acceptedTask.loggedTime).toFixed(2) + "h" : ""
                                                                             h6.mb-1 #{acceptedTask.name} [estimate: #{Math.round(acceptedTask.time * 6 * 2) / 2}h#{loggedText}]
                                                                         p.mb-1(style="font-size:9pt")
                                                                             |  #{acceptedTask.description}
@@ -128,7 +129,7 @@ block content
                                                                 div.col-sm-8
                                                                     a(href='/tasks/' + activeTask.id + '/edit', style='text-decoration: none')
                                                                         .d-flex.w-100.justify-content-between
-                                                                            h6.mb-1 #{activeTask.name} [estimate: #{Math.round(activeTask.time * 6 * 2) / 2}h, logged time: #{(activeTask.loggedTime * 6).toFixed(2)}h]
+                                                                            h6.mb-1 #{activeTask.name} [estimate: #{Math.round(activeTask.time * 6 * 2) / 2}h, logged time: #{(activeTask.loggedTime).toFixed(2)}h]
                                                                         p.mb-1(style="font-size:9pt")
                                                                             |  #{activeTask.description}
                                                                 div.col-sm-4
@@ -148,7 +149,7 @@ block content
                                                                 div.col-sm-8
                                                                     a(href='/tasks/' + doneTask.id + '/edit', style='text-decoration: none')
                                                                         .d-flex.w-100.justify-content-between
-                                                                            h6.mb-1 #{doneTask.name} [estimate: #{Math.round(doneTask.time * 6 * 2) / 2}h, logged time: #{(doneTask.loggedTime * 6).toFixed(2)}h]
+                                                                            h6.mb-1 #{doneTask.name} [estimate: #{Math.round(doneTask.time * 6 * 2) / 2}h, logged time: #{(doneTask.loggedTime).toFixed(2)}h]
                                                                         p.mb-1(style="font-size:9pt")
                                                                             | #{doneTask.description}
                                                                 div.col-sm-3

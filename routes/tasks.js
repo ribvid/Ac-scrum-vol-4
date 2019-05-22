@@ -483,7 +483,7 @@ let stopAutoTracking = async function(task){
             task_id: task.id
         },
         order: [
-            ['id', 'DESC']
+            ['id', 'ASC']
         ],
     });
 
@@ -496,8 +496,6 @@ let stopAutoTracking = async function(task){
         // manj kot minuta, damo na 1 minuto
         timeDifferenceHours = 1 / 60;
     }
-
-    timeDifferenceHours = timeDifferenceHours / 6; // shranimo v točkah
 
     timetable.setAttributes({
         remainingTime: task.time,
