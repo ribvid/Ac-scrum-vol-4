@@ -40,7 +40,7 @@ block content
 
                 .row
                     if documentation && documentation.content
-                        .col-12!= documentation.content
+                        .col-12.documentation!= documentation.content
                     else
                         .col-12.d-flex.justify-content-center.align-items-center.flex-column
                             h5.mb-5.mt-5.text-secondary
