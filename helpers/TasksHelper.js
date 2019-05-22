@@ -178,6 +178,38 @@ async function getTaskLoggedTime(task) {
     return tmpTime;
 }
 
+async function update_logged(taskId) {
+
+    let timetableArray = await Timetable.findAll({
+        where: {
+            task_id: taskId
+        },
+        order: [
+            ['id', 'DESC']
+        ],
+    });
+
+    var tmpTime = 0;
+    timetableArray.forEach(function (loggedTask) {
+        // task je še v procesu logiranja časa
+        if (loggedTask.dataValues.loggedDate.getTime() !== loggedTask.dataValues.autoLoggedDate.getTime()) {
+            tmpTime = tmpTime + loggedTask.dataValues.loggedTime;
+        }
+    });
+
+    let task = await Tasks.findOne({
+        where: {
+            id: taskId
+        }
+    });
+
+    task.setAttributes({
+        loggedTime: tmpTime
+    });
+
+    return !!await task.save();
+}
+
 module.exports = {
     listTasks,
     listProjectTasks,
@@ -187,5 +219,6 @@ module.exports = {
     deleteTasksByStoryId,
     isValidTaskChange,
     checkIfSMorMember,
-    getTaskLoggedTime
+    getTaskLoggedTime,
+    update_logged
 };
