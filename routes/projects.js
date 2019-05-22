@@ -186,11 +186,13 @@ router.get('/:id/documentation', ProjectHelper.canAccessProject, async function(
 		documentation.content = converter.makeHtml(documentation.content);
 	}
 
+	const success = req.query.status === "success" ? req.flash('success') : 0;
+
 	res.render('documentation', {
 	    pageName: 'documentation',
         project: currentProject,
         documentation: documentation,
-		success: req.query.status === "success" ? req.flash('success') : 0,
+		success: success.length > 0 ? success : 0,
 		uid: req.user.id,
 		username: req.user.username,
 		isUser: req.user.is_user,
@@ -330,6 +332,57 @@ router.post('/:id/documentation/edit', ProjectHelper.canAccessProject, async fun
 			pageName: 'create_documentation',
 			errorMessages: req.flash('error'),
 			project: currentProject,
+			uid: req.user.id,
+			username: req.user.username,
+			isUser: req.user.is_user,
+		});
+	}
+});
+
+router.post('/:id/documentation/import', ProjectHelper.canAccessProject, async function(req, res, next) {
+	const documentation = await ProjectHelper.getProjectDocumentation(req.params.id);
+
+	if (!!documentation && documentation.content) {
+		return res.redirect('/projects/' + req.params.id + '/documentation/edit');
+	}
+
+	const currentProject = await ProjectHelper.getProject(req.params.id);
+
+	const importedFile = req.files.importedDocumentation;
+
+	if (!(new RegExp('(' + [".md", ".txt"].join('|').replace(/\./g, '\\.') + ')$')).test(importedFile.name)) {
+		req.flash('error', 'Only .txt and .md files are supported!');
+		return res.render('import_documentation', {
+			pageName: 'import_documentation',
+			project: currentProject,
+			errorMessages: req.flash('error'),
+			uid: req.user.id,
+			username: req.user.username,
+			isUser: req.user.is_user,
+		});
+	}
+
+	try {
+		const buffer = Buffer.from(importedFile.data);
+		const content = buffer.toString();
+		const createdDocumentation = Documentation.build({
+			content: content,
+			project_id: currentProject.id
+		});
+
+		await createdDocumentation.save();
+
+		req.flash('success', 'Documentation for ' + currentProject.name + ' has been successfully created');
+
+		return res.redirect('/projects/' + currentProject.id + '/documentation?status=success');
+
+	} catch (e) {
+		req.flash('error', 'Error!');
+		console.log(e);
+		return res.render('import_documentation', {
+			pageName: 'import_documentation',
+			project: currentProject,
+			errorMessages: 0,
 			uid: req.user.id,
 			username: req.user.username,
 			isUser: req.user.is_user,

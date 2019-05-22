@@ -43,6 +43,8 @@ block content
                                     i.fas.fa-pen-square.mr-2
                                     | Create new documentation
                                 span.ml-3.mr-3.text-secondary or
-                                a.btn.btn-light(href="#")
-                                    i.fas.fa-file-upload.mr-2
-                                    | Import existing documentation
+                                form.d-inline(method='POST' action='/projects/' + project.id + '/documentation/import' enctype="multipart/form-data")
+                                    input.form-control-file.d-none#file-upload(type="file" name="importedDocumentation" onchange="this.form.submit()")
+                                    label.btn.btn-light.cursor-pointer.m-0(for="file-upload")
+                                        i.fas.fa-file-upload.mr-2
+                                        | Import existing documentation
