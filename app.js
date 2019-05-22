@@ -6,6 +6,7 @@ var logger = require('morgan');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var flash = require('connect-flash');
+var fileUpload = require('express-fileupload');
 
 var indexRouter = require('./routes/index');
 var loginRouter = require('./routes/login');
@@ -46,6 +47,7 @@ app.use(require('express-session')({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(fileUpload());
 app.locals.moment = require('moment');
 
 
