@@ -5,6 +5,7 @@ var models = require('../models/');
 var middleware = require('./middleware.js');
 
 var User = models.User;
+var Project = models.Project;
 
 router.get('/', middleware.ensureAuthenticated, async function (req, res, next) {
     res.redirect('/users/'+req.user.id)
@@ -92,8 +93,14 @@ router.get('/:id/delete', middleware.ensureAuthenticated, async function (req, r
         }
     });
 
-    await user.destroy().catch(function (err) {
-        req.flash('error', 'Error. User cannot be deleted.');
+    let project = await Project.findOne({
+        where: {
+            [models.Sequelize.Op.or]: [{scrum_master: req.params.id}, {product_owner: req.params.id}]
+        }
+    });
+
+    if (project) {
+        req.flash('error', 'Error. User cannot be deleted because it is linked to an active project.');
         res.render('users', {
             errorMessages: req.flash('error'),
             title: 'AC scrum vol2',
@@ -108,8 +115,10 @@ router.get('/:id/delete', middleware.ensureAuthenticated, async function (req, r
             edit_isUser: user.is_user,
             edit_userId: user.id
         });
-    });
+        return;
+    }
 
+    await user.destroy();
     res.redirect('/admin_panel')
 });
 
