@@ -29,7 +29,7 @@ block content
                         .col-md-12.col-md-offset-0.margin-top20
                             .alert.alert-success(role="alert")
                                 h4.alert-heading Success.
-                                p New user - #{success} has been successfully updated.
+                                p User - #{success} has been successfully updated.
 
                     div.col-md-9.col-md-offset-0.margin-center.margin-top20
                         div.panel-body
@@ -51,7 +51,7 @@ block content
                                                 input#username.form-control(type='text' placeholder='Username' name='username' value=edit_username)
                                             div.form-group
                                                 label(for='password1') Password:
-                                                input#password1.form-control(type='password' placeholder='Enter password' name='password' value="")
+                                                input#password1.form-control(type='password' placeholder='Enter password or leave blank to leave unchanged' name='password' value="")
                                             div.form-group
                                                 label(for='password2') Verify password:
                                                 input#password2.form-control(type='password' placeholder='Retype password' name='password2' value="")
