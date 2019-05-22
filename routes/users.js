@@ -6,6 +6,10 @@ var middleware = require('./middleware.js');
 
 var User = models.User;
 
+router.get('/', middleware.ensureAuthenticated, async function (req, res, next) {
+    res.redirect('/users/'+req.user.id)
+});
+
 router.get('/:id', middleware.ensureAuthenticated, async function (req, res, next) {
 
     let user = await User.findOne({

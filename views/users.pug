@@ -55,7 +55,7 @@ block content
                                             div.form-group
                                                 label(for='password2') Verify password:
                                                 input#password2.form-control(type='password' placeholder='Retype password' name='password2' value="")
-                                            div.custom-control.custom-checkbox
+                                            div.custom-control.custom-checkbox(hidden=!!isUser)
                                                 input#adminacc.custom-control-input(type='checkbox' name='is_user' checked=!edit_isUser)
                                                 label.custom-control-label(for='adminacc') Administrator access
 
