@@ -29,6 +29,7 @@ nav.navbar.navbar-expand-md.navbar-light.fixed-top.border-bottom
                     | #{"   " + username + (isUser ? ' (User) ' : ' (Administrator) ')}
 
                 .dropdown-menu(aria-labelledby='dropdown01')
+                    a.dropdown-item(href='/users') My user data
                     a.dropdown-item(href='/timetables') My time logs
                     a.dropdown-item(href='/logout') Logout
                     //a.dropdown-item(href='#') Something else here
