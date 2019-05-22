@@ -36,7 +36,7 @@ block content
                                     //th Edit
                             tbody
                                 each user in users
-                                    tr
+                                    tr.clickable-row(data-href='/users/'+user.id, style='cursor:pointer')
                                         //td #{user.id}
                                         td #{user.username}
                                         td #{user.name}
@@ -48,4 +48,11 @@ block content
 
                                         //        i.fa.fa-arrow-left(aria-hidden='true' style="margin-left: 5px")
 
-
+    script.
+        window.addEventListener('load', function () {
+            $(document).ready(function ($) {
+                $(".clickable-row").click(function () {
+                    window.location = $(this).data("href");
+                });
+            });
+        })
