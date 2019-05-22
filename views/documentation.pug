@@ -25,6 +25,13 @@ block content
                 hr
             div.main.container
                 .row
+                    if errorMessages !== 0
+                        .col-md-12.col-md-offset-0.margin-top20
+                            .alert.alert-danger(role="alert")
+                                h4.alert-heading #{errorMessages}
+                                p Something went wrong. Please check if your form is correct.
+
+                .row
                     if success !== 0
                         .col-md-12.col-md-offset-0.margin-top20
                             .alert.alert-success(role="alert")
@@ -33,7 +40,7 @@ block content
 
                 .row
                     if documentation && documentation.content
-                        .col-12!= documentation.content
+                        .col-12.documentation!= documentation.content
                     else
                         .col-12.d-flex.justify-content-center.align-items-center.flex-column
                             h5.mb-5.mt-5.text-secondary
@@ -43,6 +50,8 @@ block content
                                     i.fas.fa-pen-square.mr-2
                                     | Create new documentation
                                 span.ml-3.mr-3.text-secondary or
-                                a.btn.btn-light(href="#")
-                                    i.fas.fa-file-upload.mr-2
-                                    | Import existing documentation
+                                form.d-inline(method='POST' action='/projects/' + project.id + '/documentation/import' enctype="multipart/form-data")
+                                    input.form-control-file.d-none#file-upload(type="file" name="importedDocumentation" onchange="this.form.submit()")
+                                    label.btn.btn-light.cursor-pointer.m-0(for="file-upload" data-toggle="tooltip" data-placement="bottom" title="Note: You can upload only .md or .txt files." data-delay="300")
+                                        i.fas.fa-file-upload.mr-2
+                                        | Import existing documentation

@@ -117,3 +117,11 @@ nav {
 .dt-blue {
   background-color: aliceblue !important;
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.documentation img {
+  max-width: 100%;
+}
