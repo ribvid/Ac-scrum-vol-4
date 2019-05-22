@@ -188,10 +188,13 @@ router.get('/:id/documentation', ProjectHelper.canAccessProject, async function(
 
 	const success = req.query.status === "success" ? req.flash('success') : 0;
 
+	const error = req.query.status === "error" ? req.flash('error') : 0;
+
 	res.render('documentation', {
 	    pageName: 'documentation',
         project: currentProject,
         documentation: documentation,
+		errorMessages: error.length > 0 ? error : 0,
 		success: success.length > 0 ? success : 0,
 		uid: req.user.id,
 		username: req.user.username,
@@ -351,15 +354,8 @@ router.post('/:id/documentation/import', ProjectHelper.canAccessProject, async f
 	const importedFile = req.files.importedDocumentation;
 
 	if (!(new RegExp('(' + [".md", ".txt"].join('|').replace(/\./g, '\\.') + ')$')).test(importedFile.name)) {
-		req.flash('error', 'Only .txt and .md files are supported!');
-		return res.render('import_documentation', {
-			pageName: 'import_documentation',
-			project: currentProject,
-			errorMessages: req.flash('error'),
-			uid: req.user.id,
-			username: req.user.username,
-			isUser: req.user.is_user,
-		});
+		req.flash('error', 'Import has failed! Only .txt and .md files can be imported!');
+		return res.redirect('/projects/' + currentProject.id + '/documentation?status=error');
 	}
 
 	try {
@@ -372,21 +368,14 @@ router.post('/:id/documentation/import', ProjectHelper.canAccessProject, async f
 
 		await createdDocumentation.save();
 
-		req.flash('success', 'Documentation for ' + currentProject.name + ' has been successfully created');
+		req.flash('success', 'Documentation for ' + currentProject.name + ' has been successfully imported');
 
 		return res.redirect('/projects/' + currentProject.id + '/documentation?status=success');
 
 	} catch (e) {
-		req.flash('error', 'Error!');
+		req.flash('error', 'Import has failed!');
 		console.log(e);
-		return res.render('import_documentation', {
-			pageName: 'import_documentation',
-			project: currentProject,
-			errorMessages: 0,
-			uid: req.user.id,
-			username: req.user.username,
-			isUser: req.user.is_user,
-		});
+		return res.redirect('/projects/' + currentProject.id + '/documentation?status=error');
 	}
 });
 
