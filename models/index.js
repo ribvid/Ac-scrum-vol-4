@@ -7,7 +7,7 @@ var basename  = path.basename(__filename);
 var db        = {};
 
 var sequelize = new Sequelize('postgresDB', 'userDB', 'postgres', {
-    host: 'localhost',
+    host: '192.168.99.100',
     dialect: 'postgres',
     protocol: 'postgres',
     port:     '5432',
@@ -16,11 +16,6 @@ var sequelize = new Sequelize('postgresDB', 'userDB', 'postgres', {
         min: 0,
         acquire: 30000,
         idle: 10000
-    },
-
-    define: {
-        paranoid: true,
-        timestamps: true
     },
 
     // http://docs.sequelizejs.com/manual/tutorial/querying.html#operators

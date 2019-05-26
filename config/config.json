@@ -3,7 +3,7 @@
     "username": "userDB",
     "password": "postgres",
     "database": "postgresDB",
-    "host": "localhost",
+    "host": "192.168.99.100",
     "dialect": "postgres"
   },
   "test": {

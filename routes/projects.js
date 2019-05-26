@@ -11,6 +11,7 @@ var User = models.User;
 var Projects = models.Project;
 var UserProject = models.UserProject;
 var Documentation = models.Documentation;
+var CommentModel = models.Comment;
 
 // helpers
 var ProjectHelper = require('../helpers/ProjectHelper');
@@ -173,6 +174,104 @@ router.post('/create/', middleware.isAllowed, async function(req, res, next) {
 
     }
 
+});
+
+// ------ Wall
+
+router.get('/:id/wall', ProjectHelper.canAccessProject, async function(req, res, next) {
+	const currentProject = await ProjectHelper.getProject(req.params.id);
+    const comments = await ProjectHelper.getProjectWall(req.params.id);
+    //console.log(comments);
+    //console.log("--------------");
+    //const comments = "";
+    /**
+	if (!!documentation && !!documentation.content) {
+	    const converter = new showdown.Converter();
+		documentation.content = converter.makeHtml(documentation.content);
+    }
+    */
+    const converter = new showdown.Converter();
+    var i;
+    for(i = 0; i < comments.length; i++){
+        comments[i].dataValues.content = converter.makeHtml(comments[i].dataValues.content);
+    }
+	res.render('wall', {
+	    pageName: 'wall',
+        project: currentProject,
+        comments: comments,
+		success: req.query.status === "success" ? req.flash('success') : 0,
+		uid: req.user.id,
+		username: req.user.username,
+		isUser: req.user.is_user,
+	});
+});
+
+router.post('/:id/wall/:uid', ProjectHelper.canAccessProject, async function(req, res, next) {
+    const currentProject = req.params.id;
+    const currentUser = req.params.uid;
+    const currentUserUsername = req.user.username;
+    const currentUserName = req.user.name;
+    const currentUserSurname = req.user.surname;
+
+    const user = currentUserName + ' ' + currentUserSurname + ' (' + currentUserUsername + ')';
+    let comment = req.body.input_comment;
+    let date = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+
+    //Prazen komentar
+    if(comment.length == 0){
+        res.render('wall', {
+            pageName: 'wall',
+            project: currentProject,
+            comments: comments,
+            success: "error",
+            uid: req.user.id,
+            username: req.user.username,
+            isUser: req.user.is_user,
+        });  
+    }
+
+    //-> pretvorba v markdown
+    const comments = await ProjectHelper.getProjectWall(req.params.id);
+    const converter = new showdown.Converter();
+    var i;
+    for(i = 0; i < comments.length; i++){
+        comments[i].dataValues.content = converter.makeHtml(comments[i].dataValues.content);
+    }
+    
+
+    //Dodaj v bazo vse zgoraj
+    try {
+
+		// Create new documentation
+		const createdComment = CommentModel.build({
+            username: user,
+            id_user: currentUser,
+            content: comment,
+            createdat: date,
+            updatedat: date,
+			project_id: currentProject,
+		});
+
+		await createdComment.save();
+
+		req.flash('success', 'Comment has been successfully created');
+
+		return res.redirect('/projects/' + currentProject + '/wall?status=success');
+
+    } catch (e) {
+		req.flash('error', 'Error!');
+		console.log(e);
+		return res.render('wall', {
+			pageName: 'wall',
+			errorMessages: req.flash('error'),
+			project: currentProject,
+            comments: comments,
+            success: "exception",
+            uid: req.user.id,
+            username: req.user.username,
+            isUser: req.user.is_user,
+		});
+	}
 });
 
 // ------------------ endpoints for documentation ------------------
