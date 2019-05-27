@@ -69,6 +69,9 @@ block content
                                                 button.btn.btn-primary.center-block.margin-top20#createBtn(type='submit') Create
                                             if toEditSprint
                                                 button.btn.btn-primary.center-block.margin-top20#updateBtn(type='submit') Update
+                                                |
+                                                |
+                                                a.btn.btn-danger.margin-top20(href='/sprints/' + currentSprint.id + '/delete' ) Delete
     div#start_date(style='display:none;')
         if(toEditSprint)
             #{toEditSprint.startDate}
@@ -107,7 +110,7 @@ block content
                     var s_formated = moment(start_date, 'YYYY-MM-DD').format("DD.MM.YYYY");
                     flatpickr("#flatpickr-tryme", {
                         mode: "range",
-                        minDate: start_date, //TODO: maybe to change
+                        minDate: "today", //TODO: maybe to change
                         dateFormat: "d.m.Y",
                         defaultDate: [s_formated,e_formated]
                     });

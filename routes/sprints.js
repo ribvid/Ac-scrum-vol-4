@@ -380,7 +380,18 @@ router.post('/:id/edit/', SprintsHelper.isSM, async function(req, res, next) {
 
 });
 
+//  ------------- delete a sprint ----------------
+router.get('/:id/delete', SprintsHelper.isSM, async function(req, res, next) {
 
+    await Sprint.destroy({
+        where: {
+            id: req.params.id
+        },
+        force:true,
+    });
+
+    res.redirect('/sprints');
+});
 
 
 
