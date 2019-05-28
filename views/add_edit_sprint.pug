@@ -104,20 +104,21 @@ block content
                 var end_date        = $("#end_date").text().replace("<","").replace(">","");
                 var sprint_id       = $("#sprint_id").text().replace("<", "").replace(">", "");
 
+                var tomorrow = moment(new Date()).startOf('day').add(1, 'days').toDate();
 
                 if (start_date) {
                     var e_formated = moment(end_date, 'YYYY-MM-DD').format("DD.MM.YYYY");
                     var s_formated = moment(start_date, 'YYYY-MM-DD').format("DD.MM.YYYY");
                     flatpickr("#flatpickr-tryme", {
                         mode: "range",
-                        minDate: "today", //TODO: maybe to change
+                        minDate: tomorrow,
                         dateFormat: "d.m.Y",
                         defaultDate: [s_formated,e_formated]
                     });
                 } else {
                     flatpickr("#flatpickr-tryme", {
                         mode: "range",
-                        minDate: "today",
+                        minDate: tomorrow,
                         dateFormat: "d.m.Y"
                     });
                 }

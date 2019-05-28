@@ -21,7 +21,14 @@ block content
                                     |   Sprints
                                     if !isUser || (project.scrum_master == uid && Date.parse(currentSprint.startDate) > Date.now())
                                         li.nav-item
-                                            a.nav-link(href='/sprints/' + currentSprint.id + '/edit') Edit Sprint
+                                            - var isActive = moment().isBetween(moment(currentSprint.startDate), moment(currentSprint.endDate), 'days', '[]')
+                                            if isActive
+                                                // tooltip wrapper is workaround because tooltips don't work for disabled buttons
+                                                div.tooltip-wrapper(data-toggle="tooltip" data-placement="bottom" title="You cannot edit active sprints." data-delay=500)
+                                                    a.nav-link.disabled(href='#') Edit Sprint
+                                            else
+                                                a.nav-link(href='/sprints/' + currentSprint.id + '/edit') Edit Sprint
+
 
                 hr
             div.main.container
