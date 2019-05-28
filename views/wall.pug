@@ -20,11 +20,11 @@ block content
 
                                 if project.scrum_master == uid || project.product_owner == uid
                                     li.nav-item
-                                        a.nav-link(href='/stories/project/'+ project.id + '/create') Add User Story
+                                        a.nav-link(href='/stories/project/' + project.id + '/create') Add User Story
 
                                 if !isUser || project.scrum_master == uid
                                     li.nav-item
-                                        a.nav-link(href='/projects/'+ project.id + '/edit') Edit Project
+                                        a.nav-link(href='/projects/' + project.id + '/edit') Edit Project
                                 li.nav-item
                                     a.nav-link(href='/projects/' + project.id + '/documentation') Documentation
                                 li.nav-item
@@ -66,13 +66,16 @@ block content
                             p Please input your comment!
                     if success == "exception"
                         div.alert.alert-danger(role="alert")
-                                h5 Error
-                                p Please try again later!
+                            h5 Error
+                            p Please try again later!
                     form(method='POST' action=('/projects/' + project.id + '/wall/' + uid))
                         h6 Comment
                         textarea#inputComment(name="input_comment")
                         button.btn.btn-outline-info(type="submit" style="float: right;") Post
 
     script.
-        var simplemde = new SimpleMDE({ element: document.getElementById("inputComment") });
-        console.log();
+        var simplemde = new SimpleMDE({
+            element: document.getElementById("inputComment"),
+            hideIcons: ["side-by-side", "fullscreen"],
+            spellChecker: false,
+        });
