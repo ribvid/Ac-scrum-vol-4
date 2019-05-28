@@ -1,0 +1,78 @@
+extends layout
+
+block content
+    link(rel='stylesheet', href='https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css')
+    script(src='https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.js')
+    body
+        main.container(role="main")
+            .container.theme-showcase
+                .page-header
+                    h3.ml-3.mb-3 #{project.name} - Wall
+
+                    .container
+                        nav.navbar.navbar-expand-lg.navbar-light.bg-light
+                            ul.navbar-nav.mr-auto
+                                li.nav-item
+                                    a.nav-link(href='/projects')
+                                        i.fas.fa-chevron-left
+                                        |   Projects
+
+                                if project.scrum_master == uid || project.product_owner == uid
+                                    li.nav-item
+                                        a.nav-link(href='/stories/project/'+ project.id + '/create') Add User Story
+
+                                if !isUser || project.scrum_master == uid
+                                    li.nav-item
+                                        a.nav-link(href='/projects/'+ project.id + '/edit') Edit Project
+                                li.nav-item
+                                    a.nav-link(href='/projects/' + project.id + '/documentation') Documentation
+                                li.nav-item
+                                    a.nav-link(href='/projects/' + project.id + '/wall') Wall
+                    hr
+
+                //div.main.container(style="height: 1080px; overflow-y: scroll;")
+                div.main.container(style="height: 1000px; overflow-y: auto;")
+                    if comments.length
+                        each comment in comments
+                            if uid === comment.id_user
+                                div.card.border-info
+                                    .card-header(style="text-align: right;")
+                                        h6 #{comment.username}
+                                    .card-body(style="text-align: right;")
+                                        | !{comment.content}
+                                        p(style="text-align: left; color: gray;")
+                                            i #{moment(new Date(comment.createdAt)).format('DD.MM - hh:mm')}
+                            else
+                                div.card
+                                    .card-header
+                                        h6 #{comment.username}
+                                    .card-body
+                                        | !{comment.content}
+                                        p(style="text-align: right; color: gray;")
+                                            i #{moment(new Date(comment.createdAt)).format('DD.MM - hh:mm')}
+
+                            br
+
+                    if !comments.length
+                        div.col-md-12
+                            p Project does not have any comments yet.
+                br
+                hr
+                div
+                    if success == "error"
+                        div.alert.alert-danger(role="alert")
+                            h5 Error
+                            p Please input your comment!
+                    if success == "exception"
+                        div.alert.alert-danger(role="alert")
+                                h5 Error
+                                p Please try again later!
+                    form(method='POST' action=('/projects/' + project.id + '/wall/' + uid))
+                        h6 Comment
+                        textarea#inputComment(name="input_comment")
+                        button.btn.btn-outline-info(type="submit" style="float: right;") Post
+
+    script.
+        var simplemde = new SimpleMDE({ element: document.getElementById("inputComment") });
+        console.log();

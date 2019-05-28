@@ -1,6 +1,7 @@
 var models = require('../models');
 var Project = models.Project;
 var Documentation = models.Documentation;
+var Comment = models.Comment;
 var UserProject = models.UserProject;
 var User = models.User;
 var sequelize = require('sequelize');
@@ -170,6 +171,20 @@ async function getProjectDocumentation(projectId) {
     });
 }
 
+//Wall
+async function getProjectWall(projectId) {
+    
+    return await Comment.findAll({
+        where: {
+            "project_id": projectId,
+        },
+    });
+}
+
+async function saveProjectWallComment(projectId){
+
+}
+
 // OPTIMISE THOSE
 async function isAdmin(req, res, next) {
     var user = req.user;
@@ -296,4 +311,6 @@ module.exports = {
     canAccessProject,
     getProject,
     getSMProjects,
+    getProjectWall,
+    saveProjectWallComment,
 };
