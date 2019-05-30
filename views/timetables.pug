@@ -11,7 +11,7 @@ block content
         main.container(role="main")
             .container.theme-showcase
                 .page-header
-                    h3 My time logs
+                    h3 My time logs for task: #{task_name}
                 .container
                     nav.navbar.navbar-expand-lg.navbar-light.bg-light
                         ul.navbar-nav.mr-auto
@@ -19,6 +19,9 @@ block content
                                 a.nav-link(href='/dashboard')
                                     i.fas.fa-chevron-left
                                     |   Dashboard
+                            li.nav-item
+                                a.nav-link(href='/timetables')
+                                    |   Timetables
                     hr
                 div.main.container
                       
@@ -36,30 +39,76 @@ block content
                                         th(scope="col") Estimated time
                                         th(scope="col") Logged time
                                         th(scope="col") Edit
-                                        th(scope="col") Delete
+                                        //th(scope="col") Delete
                                 tbody
-                                    each log in timeLogs
+                                    each log in logs
                                         tr
-                                            td #{log.Task.Story.Project.name}
+                                            td #{log.Task.Story.Sprint.Project.name}
                                             td #{log.Task.Story.name}
                                             td(title=log.Task.description) #{log.Task.name}
                                             td #{moment(log.loggedDate, 'YYYY-MM-DD hh:mm').format("DD. MM. YYYY HH:mm")}
                                             td #{Math.round(log.remainingTime * 6 * 2) / 2}
                                             td #{(log.loggedTime).toFixed(2)}
                                             if log.Task.status != 4
-                                                td
-                                                    a.btn.btn-warning(href="/timetables/edit/" + log.id) Edit
-                                                td
-                                                    a.btn.btn-danger(href="#" onclick="alert(" + log.id + ")") Delete
+                                                if log.ghost == -1
+                                                    td
+                                                        button.btn.btn-warning(onclick="addMe(this, " + log.ghost + ")") Edit
+                                                    //td
+                                                        button.btn.btn-danger(disabled=true onclick="alertWindow(" + log.ghost + ")") Delete
+                                                else
+                                                    td
+                                                        a.btn.btn-warning(href="/timetables/edit/" + log.id) Edit
+                                                    //td
+                                                        a.btn.btn-danger(onclick="alertWindow(" + log.id + ")") Delete
                                             else
                                                 td
                                                     button.btn.btn-warning(disabled=true) Edit
-                                                td
-                                                    button.btn.btn-danger( disabled=true onclick="alert(" + log.id + ")") Delete
+                                                //td
+                                                    button.btn.btn-danger( disabled=true onclick="alertWindow(" + log.id + ")") Delete
 
     script.
-        function alert(id){
-            if(confirm("Are you sure you want to delete this log entry?")){
-                window.location.href = "/timetables/delete/" + id 
+        function alertWindow(id){
+            if(id > -1){
+                if(confirm("Are you sure you want to delete this log entry?")){
+                    window.location.href = "/timetables/delete/" + id 
+                }
+            } else{
+                console.log(id)
+                alert("This log cannot be deleted, because it is not stored in the database.");
             }
+            
+        }
+
+        function addMe(id, ghost){
+            console.log(id);
+            if(ghost == -1){
+                //console.log($(id).parent());
+                let el = $(id).parent().parent().children();
+                console.log(el);
+                let data = [];
+                for(ele in el){
+                    if(!isNaN(ele)){
+                        data.push(el[ele].innerHTML)
+                        console.log(el[ele].innerHTML);
+                    }
+                }
+                data.pop();
+                let task_id = window.location.href.split("/")
+                task_id = task_id[task_id.length-1];
+                data.push(task_id);
+
+                console.log(data);
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "/timetables/add/", true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(JSON.stringify({
+                    data: data
+                }));
+                xhr.onreadystatechange=function(){
+                    console.log(xhr.responseText);
+                    window.location.href = xhr.responseText;
+                }
+            }
+            
         }

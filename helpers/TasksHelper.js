@@ -50,6 +50,35 @@ async function getTask(taskId) {
     });
 }
 
+async function getTaskSprint(taskId) {
+    return await Tasks.findOne( {
+        include: [
+            {
+                model: models.Stories,
+                as: 'Story',
+                attributes: ['name', 'sprint_id'],
+                include: [
+                    {
+                        model: models.Sprint,
+                        as: 'Sprint',
+                        attributes: ['startDate', 'endDate'],
+                        include: [
+                            {
+                                model: models.Project,
+                                as: 'Project',
+                                attributes: ['name']
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        where: {
+            id: taskId,
+        }
+    });
+}
+
 async function deleteTaskById(taskId) {
     if (!taskId) {
         return {msg: 'No Id specified..', payload: 1};
@@ -220,5 +249,6 @@ module.exports = {
     isValidTaskChange,
     checkIfSMorMember,
     getTaskLoggedTime,
-    update_logged
+    update_logged,
+    getTaskSprint
 };

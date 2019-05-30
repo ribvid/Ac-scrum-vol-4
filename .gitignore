@@ -148,3 +148,15 @@ fabric.properties
 # IntelliJ IDEA
 **/.idea/
 **/*.iml
+.vs/Ac-scrum-vol-4/v15/.suo
+.vs/config/applicationhost.config
+.vs/ProjectSettings.json
+.vs/slnx.sqlite
+.vs/VSWorkspaceState.json
+
+config/config.json
+models/index.js
+package-lock.json
+config/config.json
+models/index.js
+package-lock.json

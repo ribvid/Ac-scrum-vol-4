@@ -75,16 +75,16 @@ block content
                                                     div.list-group-item.list-group-item-action
                                                         div.container
                                                             div.row
-                                                                div.col-sm-8
+                                                                div.col-sm-7
                                                                     a(href='/tasks/' + pendingTask.id + '/edit', style='text-decoration: none')
                                                                         .d-flex.w-100.justify-content-between
                                                                             h6.mb-1 #{pendingTask.name} [estimate: #{Math.round(pendingTask.time * 6 * 2) / 2}h]
                                                                         p.mb-1(style="font-size:9pt")
                                                                             |  #{pendingTask.description}
-                                                                div.col-sm-4
+                                                                div.col-sm-5
                                                                     a.btn.btn-success.margin-bottom10(href='/tasks/' + pendingTask.id + '/accept', style='margin-right: 4px')
                                                                         | &#10003;
-                                                                    a.btn.btn-danger.margin-bottom10(href='/tasks/' + pendingTask.id + '/reject')
+                                                                    a.btn.btn-danger.margin-bottom10(href='/tasks/' + pendingTask.id + '/reject', style='margin-right: 4px')
                                                                         | &#10005;
 
                                             if (separator && myTasks.accepted.length !== 0)
@@ -98,7 +98,7 @@ block content
                                                     div.list-group-item.list-group-item-action
                                                         div.container
                                                             div.row
-                                                                div.col-sm-7
+                                                                div.col-sm-5
                                                                     a(href='/tasks/' + acceptedTask.id + '/edit', style='text-decoration: none')
                                                                         .d-flex.w-100.justify-content-between
                                                                             - loggedText = acceptedTask.loggedTime > 0.0 ? ", logged time: " + (acceptedTask.loggedTime).toFixed(2) + "h" : ""
@@ -106,14 +106,16 @@ block content
                                                                         p.mb-1(style="font-size:9pt")
                                                                             |  #{acceptedTask.description}
                                                                 div.col-sm-2
-                                                                    a.btn.btn-primary.float-right(href='/tasks/' + acceptedTask.id + '/startTemp')
+                                                                    a.btn.btn-primary(href='/tasks/' + acceptedTask.id + '/startTemp')
                                                                         | Start work
-                                                                div.col-sm-3
-                                                                    a.btn.btn-danger.float-left(href='/tasks/' + acceptedTask.id + '/reject')
+                                                                div.col-sm-5
+                                                                    a.btn.btn-danger(href='/tasks/' + acceptedTask.id + '/reject')
                                                                         | X
                                                                     if (acceptedTask.loggedTime > 0.0)
                                                                         a.btn.btn-success(href='/tasks/' + acceptedTask.id + '/finish', style="margin-left: 30px;")
                                                                             | Mark as done
+                                                                    a.btn.btn-warning(href='/timetables/' + acceptedTask.id, style="margin-left: 30px;")
+                                                                        | View log
 
                                             if (separator && myTasks.inProgress.length !== 0)
                                                 hr
@@ -135,6 +137,8 @@ block content
                                                                 div.col-sm-4
                                                                     a.btn.btn-primary.float-left(href='/tasks/' + activeTask.id + '/pause')
                                                                         | Pause progress
+                                                                    a.btn.btn-warning(href='/timetables/' + activeTask.id, style="margin-left: 30px;")
+                                                                        | View log
 
                                             if (separator && myTasks.done.length !== 0)
                                                 hr
@@ -146,12 +150,14 @@ block content
                                                     div.list-group-item.list-group-item-action
                                                         div.container
                                                             div.row
-                                                                div.col-sm-8
+                                                                div.col-sm-6
                                                                     a(href='/tasks/' + doneTask.id + '/edit', style='text-decoration: none')
                                                                         .d-flex.w-100.justify-content-between
                                                                             h6.mb-1 #{doneTask.name} [estimate: #{Math.round(doneTask.time * 6 * 2) / 2}h, logged time: #{(doneTask.loggedTime).toFixed(2)}h]
                                                                         p.mb-1(style="font-size:9pt")
                                                                             | #{doneTask.description}
-                                                                div.col-sm-3
+                                                                div.col-sm-6
                                                                     a.btn.btn-primary(href='/tasks/' + doneTask.id + '/restart')
                                                                         | Restart work
+                                                                    a.btn.btn-warning(href='/timetables/' + doneTask.id, style="margin-left: 30px;")
+                                                                        | View log
