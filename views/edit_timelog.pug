@@ -52,8 +52,8 @@ block content
                                                 label(for='task_description') Logged time [h]:
                                                 input#logged_time.form-control(type='number' min="0" step="0.01" required="required" pattern="[0-9]{1,10}" placeholder='Enter logged time' name='loggedTime' value=(toEditLog.loggedTime.toFixed(2)) )
                                             div.form-group
-                                                label(for='task_time') Task time remainig [estimate]:
-                                                input#task_time.form-control(type='number' min="0" step="0.1" required="required" pattern="[0-9]{1,10}" placeholder='Task time remainig' name="timeRemaining" value=(toEditTask.time))
+                                                label(for='task_time') Task time remaining [estimate]:
+                                                input#task_time.form-control(type='number' min="0" step="0.1" required="required" pattern="[0-9]{1,10}" placeholder='Task time remaining' name="timeRemaining" value=(Math.round(toEditTask.time * 6 * 2) / 2))
                                             
                                             button.btn.btn-primary.center-block.margin-top20#updateBtn(type='submit') Update
 

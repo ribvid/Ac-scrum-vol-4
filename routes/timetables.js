@@ -200,18 +200,22 @@ router.post('/:id/edit/', middleware.ensureAuthenticated, async function (req, r
     let update_task = await TasksHelper.getTask(to_update.task_id);
     let data = req.body;
 
+    console.log("TIME");
+    console.log(data.timeRemaining);
+
     to_update.setAttributes({
-        remainingTime: data.timeRemaining/6,
-        loggedTime: data.loggedTime
+        remainingTime: data.timeRemaining / 6,
+        loggedTime: data.loggedTime,
     });
     await to_update.save();
 
-    update_task.setAttributes({
-        time: data.timeRemaining
-    });
-    await update_task.save();
+	update_task.setAttributes({
+		time: data.timeRemaining / 6
+	});
+	await update_task.save();
 
-    let is_updated = await TasksHelper.update_logged(update_task.id);
+
+	let is_updated = await TasksHelper.update_logged(update_task.id);
 
     if (is_updated) {
         req.flash('success', 'Log has been successfully updated.');
