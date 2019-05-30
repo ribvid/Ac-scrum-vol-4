@@ -1,0 +1,66 @@
+extends layout
+
+block content
+    link(rel='stylesheet', href='/stylesheets/vendor/flatpickr.min.css')
+    script(src='/javascripts/vendor/flatpickr.min.js')
+    script(src='/javascripts/vendor/moment.js')
+    link(href='/stylesheets/vendor/select2.min.css', rel='stylesheet')
+    link(href='/stylesheets/vendor/select2-bootstrap.min.css', rel='stylesheet')
+
+    body
+        main.container(role="main")
+            .container.theme-showcase
+                .page-header
+                    h3 My time logs
+                .container
+                    nav.navbar.navbar-expand-lg.navbar-light.bg-light
+                        ul.navbar-nav.mr-auto
+                            li.nav-item
+                                a.nav-link(href='/dashboard')
+                                    i.fas.fa-chevron-left
+                                    |   Dashboard
+                    hr
+                div.main.container
+                      
+                    .card
+                        .card-header#bg-theme
+                            | My time logs
+                        .card-body
+                            table.table.table-bordered.table-hover(summary="List of all time logs per date")
+                                thead.thead-dark
+                                    tr
+                                        th(scope="col") Project
+                                        th(scope="col") Story
+                                        th(scope="col") Task
+                                        th(scope="col") Log date
+                                        th(scope="col") Estimated time
+                                        th(scope="col") Logged time
+                                        th(scope="col") Edit
+                                        //th(scope="col") Delete
+                                tbody
+                                    each lg in logs
+                                        each log in lg
+                                            tr
+                                                td #{log.Task.Story.Sprint.Project.name}
+                                                td #{log.Task.Story.name}
+                                                td(title=log.Task.description) #{log.Task.name}
+                                                td #{moment(log.loggedDate, 'YYYY-MM-DD hh:mm').format("DD. MM. YYYY HH:mm")}
+                                                td #{Math.round(log.remainingTime * 6 * 2) / 2}
+                                                td #{(log.loggedTime).toFixed(2)}
+                                                if log.Task.status != 4
+                                                    td
+                                                        a.btn.btn-warning(href="/timetables/edit/" + log.id) Edit
+                                                    //td
+                                                        a.btn.btn-danger(href="#" onclick="alert(" + log.id + ")") Delete
+                                                else
+                                                    td
+                                                        button.btn.btn-warning(disabled=true) Edit
+                                                    //td
+                                                        button.btn.btn-danger( disabled=true onclick="alert(" + log.id + ")") Delete
+
+    script.
+        function alert(id){
+            if(confirm("Are you sure you want to delete this log entry?")){
+                window.location.href = "/timetables/delete/" + id 
+            }
+        }

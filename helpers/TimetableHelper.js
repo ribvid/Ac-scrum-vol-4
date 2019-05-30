@@ -11,7 +11,7 @@ const SprintsHelper = require('../helpers/SprintsHelper');
 
 var moment = require('moment');
 
-async function listTimeLogs(userId) {
+async function listTimeLogs(userId, taskId) {
     return await Timetable.findAll({
         include: [
             {
@@ -21,20 +21,63 @@ async function listTimeLogs(userId) {
                     {
                         model: models.Stories,
                         as: 'Story',
-                        attributes: ['name'],
+                        attributes: ['name', 'sprint_id'],
                         include: [
                             {
-                                model: models.Project,
-                                as: 'Project',
-                                attributes: ['name']
+                                model: models.Sprint,
+                                as: 'Sprint',
+                                attributes: ['startDate', 'endDate'],
+                                include: [
+                                    {
+                                        model: models.Project,
+                                        as: 'Project',
+                                        attributes: ['name']
+                                    }
+                                ]
                             }
-                        ],
+                        ]
                     }
                 ]
             }
         ],
         where: {
             loggedUser: userId,
+            task_id: taskId
+        }
+    });
+}
+
+async function listTimeLogsAll(userId) {
+    return await Timetable.findAll({
+        include: [
+            {
+                model: models.Tasks,
+                as: 'Task',
+                include: [
+                    {
+                        model: models.Stories,
+                        as: 'Story',
+                        attributes: ['name', 'sprint_id'],
+                        include: [
+                            {
+                                model: models.Sprint,
+                                as: 'Sprint',
+                                attributes: ['startDate', 'endDate'],
+                                include: [
+                                    {
+                                        model: models.Project,
+                                        as: 'Project',
+                                        attributes: ['name']
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        where: {
+            loggedUser: userId
         }
     });
 }
@@ -65,6 +108,7 @@ async function deleteLogById(logId) {
 
 module.exports = {
     listTimeLogs,
+    listTimeLogsAll,
     getLogToEdit,
     deleteLogById
 };
